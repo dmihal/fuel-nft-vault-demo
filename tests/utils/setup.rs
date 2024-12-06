@@ -1,7 +1,8 @@
 use fuels::{
     prelude::*,
+    core::codec::EncoderConfig,
 };
-use super::abis::{Vault};
+use super::abis::{Vault, DepositScript, DepositScriptConfigurables};
 
 pub const ETH_ASSET: AssetId = AssetId::new([0u8; 32]);
 pub const OTHER_ASSET: AssetId = AssetId::new([1u8; 32]);
@@ -10,6 +11,7 @@ pub struct Fixture {
     pub provider: Provider,
     pub wallet: WalletUnlocked,
     pub vault: Vault<WalletUnlocked>,
+    pub deposit_script: DepositScript<WalletUnlocked>,
 }
 
 pub async fn setup() -> Fixture {
@@ -36,10 +38,17 @@ pub async fn setup() -> Fixture {
 
     let vault = deploy_vault(&wallet).await;
 
+    let bin_path = "./scripts/deposit_script/out/debug/deposit_script.bin";
+    let deposit_script = DepositScript::new(wallet.clone(), &bin_path)
+        .with_configurables(DepositScriptConfigurables::new(EncoderConfig::default())
+            .with_VAULT_CONTRACT_ADDRESS(vault.id().into())
+            .unwrap());
+
     Fixture {
         provider,
         wallet,
         vault,
+        deposit_script,
     }
 }
 

@@ -2,7 +2,8 @@ mod utils;
 
 use fuels::{
     prelude::*,
-    types::{Bits256, ContractId},
+    programs::responses::CallResponse,
+    types::{Bits256, ContractId, output::Output},
 };
 use utils::{
     abis::TokenIdentifier,
@@ -48,6 +49,37 @@ async fn can_deposit_and_withdraw() {
     let tx = fixture.vault.methods()
         .withdraw_assets(position_id, TokenIdentifier::Input(1), 100, fixture.wallet.address().into())
         .add_custom_asset(position_asset_id, 1, Some(fixture.wallet.address().clone()))
+        .with_variable_output_policy(VariableOutputPolicy::Exactly(1))
+        .call()
+        .await
+        .unwrap();
+}
+
+#[tokio::test]
+async fn can_create_and_deposit_same_tx() {
+    let fixture = setup().await;
+
+    let inputs = fixture.wallet.get_asset_inputs_for_amount(OTHER_ASSET, 100, None).await.unwrap();
+    let outputs = vec![
+        Output::change(fixture.wallet.address().into(), 0, OTHER_ASSET),
+    ];
+
+    let result = fixture.deposit_script
+        .main(OTHER_ASSET, 100, fixture.wallet.address())
+        .with_inputs(inputs)
+        .with_outputs(outputs)
+        .with_variable_output_policy(VariableOutputPolicy::Exactly(1))
+        .with_contracts(&[&fixture.vault])
+        .call()
+        .await
+        .unwrap();
+
+    let vault_id = result.value;
+    let vault_asset_id = fixture.vault.id().asset_id(&Bits256(u64_to_u8_32(vault_id)));
+
+    let tx = fixture.vault.methods()
+        .withdraw_assets(vault_id, TokenIdentifier::Input(1), 100, fixture.wallet.address().into())
+        .add_custom_asset(vault_asset_id, 1, Some(fixture.wallet.address().clone()))
         .with_variable_output_policy(VariableOutputPolicy::Exactly(1))
         .call()
         .await

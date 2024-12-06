@@ -3,6 +3,14 @@ name = "core"
 source = "path+from-root-6A8836696D55BC6E"
 
 [[package]]
+name = "deposit_script"
+source = "member"
+dependencies = [
+    "lib",
+    "std",
+]
+
+[[package]]
 name = "lib"
 source = "member"
 dependencies = ["std"]

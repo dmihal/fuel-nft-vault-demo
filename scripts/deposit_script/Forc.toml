@@ -1,0 +1,8 @@
+[project]
+authors = ["David Mihal"]
+entry = "main.sw"
+license = "Apache-2.0"
+name = "deposit_script"
+
+[dependencies]
+lib = { path = "../../lib" }

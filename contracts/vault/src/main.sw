@@ -10,7 +10,7 @@ use std::{
     context::{msg_amount, balance_of},
     hash::Hash,
     inputs::{input_amount, input_asset_id},
-    outputs::{output_amount, output_asset_id},
+    outputs::{output_amount},
     registers::global_gas,
     tx::tx_id,
 };
@@ -18,7 +18,7 @@ use events::*;
 use lib::abis::Vault;
 use lib::data_structures::*;
 use lib::u64_to_subid;
-use utils::transfer;
+use utils::{transfer, output_asset_id};
 
 storage {
     next_vault_id: VaultId = 0,
@@ -109,6 +109,7 @@ fn validate_token(vault_id: VaultId, token: TokenIdentifier) {
             return;
         }
     };
+
     require(caller_is_external(), Error::MustBeCalledFromScript);
     require(asset_id.is_some() && asset_id.unwrap() == expected_asset_id, Error::InvalidTokenId);
     require(amount.is_some() && amount.unwrap() == 1, Error::InvalidTokenAmount);
