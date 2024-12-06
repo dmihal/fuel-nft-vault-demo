@@ -85,7 +85,7 @@ impl Vault for Contract {
         vault.amount -= amount;
         storage.vaults.insert(vault_id, vault);
 
-        transfer(recipient, vault.asset_id, amount);
+        let _ = transfer(recipient, vault.asset_id, amount);
 
         log(WithdrawEvent {
             vault_id,
