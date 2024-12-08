@@ -1,5 +1,6 @@
 [workspace]
 members = [
+  "contracts/test_user_wallet",
   "contracts/vault",
   "lib",
   "scripts/deposit_script",

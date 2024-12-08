@@ -1,0 +1,8 @@
+[project]
+authors = ["David Mihal"]
+entry = "main.sw"
+license = "Apache-2.0"
+name = "test_user_wallet"
+
+[dependencies]
+lib = { path = "../../lib" }

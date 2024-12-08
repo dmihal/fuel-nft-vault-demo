@@ -21,6 +21,14 @@ source = "git+https://github.com/fuellabs/sway?tag=v0.66.5#94a066652468b4afa3bd3
 dependencies = ["core"]
 
 [[package]]
+name = "test_user_wallet"
+source = "member"
+dependencies = [
+    "lib",
+    "std",
+]
+
+[[package]]
 name = "vault"
 source = "member"
 dependencies = [

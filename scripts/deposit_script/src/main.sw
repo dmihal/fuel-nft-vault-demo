@@ -1,6 +1,5 @@
 script;
 
-use std::logging::log;
 use lib::{
     abis::Vault,
     data_structures::{TokenIdentifier, VaultId},
