@@ -22,6 +22,14 @@ Normal accounts (EOAs and predicates) can use the vault by referencing their coi
 
 ## Advantages over `msg_sender()`
 
-Developers who switch from developing on the EVM/Solidity to developing on Fuel/Sway will typically use the `msg_sender()` function, which aims to emulate the functionality of Solidity's `msg.sender` value.
+Similar "vault" contracts written in Solidity would typically use the `msg.sender` value (the account or contract that called the function) as the "owner" of the vault. Deposits and withdrawals are possible as long as the transaction is initiated by the stored sender.
 
-This technique provides many advantages over using the `msg_sender`
+Developers who switch from developing on the EVM/Solidity to developing on Fuel/Sway will typically use the `msg_sender()` function, which aims to emulate the functionality of Solidity's `msg.sender` value. However, Fuel's unique transaction model means that there are some limitations of this model.
+
+While EVM transactions have a single "sender" address that originates the transaction, Fuel's UTXO model means that coins from multiple different wallets may be signed and attached to a single transaction. The `msg_sender()` implementation inspects all input coins in a transaction, and will return the address of the owner if all coins are sent from the same address. However, if a transaction includes coins from multiple addresses, then `msg_sender()` will not be able to return a result. This limits the ability for applications to use sponsored gas payments, predicates, and other novel architectures.
+
+The NFT technique provides many advantages over using the `msg_sender`:
+
+* Transactions may include coins from multiple senders, enabling features like gas sponsorship
+* Vaults can be easily transferred from one account to another
+* Wallets can display a user's vault position in the UI
